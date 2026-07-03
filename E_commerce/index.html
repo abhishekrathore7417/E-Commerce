@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniCart Premium Store Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; }
+        header { background-color: #1e293b; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .logo { font-size: 24px; font-weight: bold; letter-spacing: 1px; }
+        nav a { color: #cbd5e1; text-decoration: none; margin-left: 20px; font-weight: 500; cursor: pointer; }
+        nav a:hover { color: white; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        
+        .analytics-grid { display: flex; gap: 20px; margin-bottom: 35px; flex-wrap: wrap; }
+        .analytics-card { flex: 1; min-width: 250px; background: white; padding: 20px; border-radius: 10px; border-left: 5px solid #2563eb; box-shadow: 0 4px 6px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; border-left: 5px solid #2563eb; }
+        .analytics-card.sales { border-left-color: #10b981; }
+        .analytics-card.avg { border-left-color: #eab308; }
+        .analytics-card h4 { margin: 0; color: #64748b; font-size: 14px; text-transform: uppercase; }
+        .analytics-card .value { font-size: 28px; font-weight: bold; color: #1e293b; margin-top: 5px; }
+
+        .form-section, .order-section { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 40px; border: 1px solid #e2e8f0; }
+        .form-grid { display: flex; gap: 15px; flex-wrap: wrap; }
+        .form-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: 600; color: #334155; font-size: 14px; }
+        .form-group input, .form-group select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        .btn-submit { background-color: #10b981; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; margin-top: 22px; }
+        .btn-submit:hover { background-color: #059669; }
+
+        .search-filter-section { display: flex; gap: 15px; margin-bottom: 25px; background: white; padding: 15px 20px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        .search-input { flex: 2; padding: 10px 15px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; }
+        .price-filter { flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; background: white; cursor: pointer; }
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 25px; }
+        .tab-btn { background-color: #e2e8f0; color: #334155; border: none; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .tab-btn.active, .tab-btn:hover { background-color: #2563eb; color: white; }
+
+        h2 { color: #1e293b; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .product-grid { display: flex; gap: 25px; flex-wrap: wrap; margin-bottom: 50px; }
+        .product-card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; width: 260px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card img { max-width: 100%; height: 180px; object-fit: cover; border-radius: 8px; }
+        .product-card h3 { font-size: 18px; color: #334155; margin: 15px 0 5px 0; }
+        .product-card p { font-size: 14px; color: #64748b; height: 40px; margin: 0 0 5px 0; }
+        .product-tag { font-size: 11px; background-color: #eff6ff; color: #2563eb; padding: 3px 8px; border-radius: 12px; align-self: center; font-weight: bold; margin-bottom: 10px; }
+        .product-price { color: #10b981; font-size: 20px; font-weight: bold; margin-bottom: 15px; }
+        .button-group { display: flex; flex-direction: column; gap: 8px; }
+        .action-row { display: flex; gap: 8px; }
+        .btn-add { background-color: #2563eb; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn-add:hover { background-color: #1d4ed8; }
+        .btn-edit { background-color: #eab308; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
+        .btn-delete { background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 6px; cursor: pointer; flex: 1; font-weight: bold; }
+
+        .order-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .order-table th, .order-table td { border: 1px solid #cbd5e1; padding: 12px; text-align: left; }
+        .order-table th { background-color: #1e293b; color: white; }
+        .order-table tr:nth-child(even) { background-color: #f1f5f9; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; visibility: hidden; opacity: 0; transition: all 0.3s ease; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+        .cart-modal { background: white; width: 450px; max-height: 80vh; border-radius: 12px; padding: 25px; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .close-btn { background: none; border: none; font-size: 24px; cursor: pointer; }
+        .cart-items-list { overflow-y: auto; flex: 1; margin: 15px 0; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .cart-item-info h4 { margin: 0; }
+        .cart-item-info span { color: #10b981; font-weight: bold; }
+        .modal-footer { border-top: 2px solid #e2e8f0; padding-top: 15px; }
+        .total-price-row { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 15px; }
+        .btn-checkout { background-color: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; width: 100%; font-weight: bold; cursor: pointer; }
+        .error-msg { color: #dc2626; background-color: #fee2e2; padding: 15px; border-radius: 8px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">MiniCart Dashboard 🛒</div>
+        <nav>
+            <a onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Store</a>
+            <a onclick="document.getElementById('orderHistorySection').scrollIntoView({behavior: 'smooth'})">Orders Management</a>
+            <a onclick="toggleCartModal(true)">Cart (<span id="cart-count">0</span>)</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <h4>Total Orders</h4>
+                <div class="value" id="metrics-orders">0</div>
+            </div>
+            <div class="analytics-card sales">
+                <h4>Total Sales Revenue</h4>
+                <div class="value" id="metrics-sales">₹0</div>
+            </div>
+            <div class="analytics-card avg">
+                <h4>Average Basket Value</h4>
+                <div class="value" id="metrics-avg">₹0</div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3 style="margin-top: 0; color: #1e293b;">➕ Add New Product to Database</h3>
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" id="p_name" placeholder="e.g., Realme Watch" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" id="p_price" placeholder="e.g., 2999" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" id="p_desc" placeholder="e.g., AMOLED Screen" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="p_category" required>
+                            <option value="Audio">Audio</option>
+                            <option value="Wearables">Wearables</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Image URL</label>
+                        <input type="url" id="p_image" placeholder="Paste clear image link" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Save Product</button>
+                </div>
+            </form>
+        </div>
+
+        <h2>Latest Bluetooth Devices</h2>
+
+        <div class="category-tabs">
+            <button class="tab-btn active" onclick="selectCategory(this, 'all')">All Products</button>
+            <button class="tab-btn" onclick="selectCategory(this, 'Audio')">Audio</button>
+            <button class="tab-btn" onclick="selectCategory(this, 'Wearables')">Wearables</button>
+        </div>
+
+        <div class="search-filter-section">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search active items..." oninput="filterProducts()">
+            <select id="priceFilter" class="price-filter" onchange="filterProducts()">
+                <option value="all">Sort By Price</option>
+                <option value="lowToHigh">Price: Low to High</option>
+                <option value="highToLow">Price: High to Low</option>
+            </select>
+        </div>
+        
+        <div class="product-grid" id="product-container">
+            <p style="text-align: center; width: 100%; color: #64748b;">Loading active catalog...</p>
+        </div>
+
+        <div class="order-section" id="orderHistorySection">
+            <h3 style="margin-top: 0; color: #1e293b;">📋 Database Log Audit & Deletions</h3>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Volume</th>
+                        <th>Net Transaction Value</th>
+                        <th>Settlement Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="order-table-body">
+                    <tr><td colspan="5" style="text-align: center; color: #64748b;">No items recorded yet.</td></tr>
+                </thead>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="cartOverlay">
+        <div class="cart-modal">
+            <div class="modal-header">
+                <h3 style="margin: 0;">Your Shopping Cart 🛒</h3>
+                <button class="close-btn" onclick="toggleCartModal(false)">&times;</button>
+            </div>
+            <div class="cart-items-list" id="cartItemsList"></div>
+            <div class="modal-footer">
+                <div class="total-price-row">
+                    <span>Total Billable Amount:</span>
+                    <span id="totalCartAmount">₹0</span>
+                </div>
+                <button class="btn-checkout" onclick="checkoutCart()">Proceed to Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allProductsRaw = []; 
+        let currentCartItemsGlobal = []; 
+        let selectedCategoryGlobal = 'all'; 
+        const API_URL = "http://localhost:8080/api/products";
+
+        async function initializeApp() {
+            await loadProducts(); 
+            await fetchCartFromDB(); 
+            await fetchOrderHistoryFromDB(); 
+        }
+
+        async function loadProducts() {
+            try {
+                const response = await fetch(API_URL);
+                allProductsRaw = await response.json(); 
+                renderGrid(allProductsRaw); 
+            } catch (error) {
+                document.getElementById("product-container").innerHTML = `<div class="error-msg">Backend Offline/Server Connection Refused.</div>`;
+            }
+        }
+
+        function renderGrid(productsArray) {
+            const container = document.getElementById("product-container");
+            container.innerHTML = ""; 
+            if(productsArray.length === 0) {
+                container.innerHTML = "<p style='text-align:center; width:100%; color:#64748b;'>No items match standard active filters.</p>";
+                return;
+            }
+            productsArray.forEach(product => {
+                container.innerHTML += `
+                    <div class="product-card">
+                        <img src="${product.imageUrl}" alt="${product.name}">
+                        <h3>${product.name}</h3>
+                        <span class="product-tag">${product.category || 'General'}</span>
+                        <p>${product.description}</p>
+                        <div class="product-price">₹${product.price.toLocaleString('en-IN')}</div>
+                        <div class="button-group">
+                            <button class="btn-add" onclick="addToCartInDB(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price})">Add to Cart</button>
+                            <div class="action-row">
+                                <button class="btn-edit" onclick="editProduct(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.description.replace(/'/g, "\\'")}', '${product.imageUrl}', '${product.category}')">Edit</button>
+                                <button class="btn-delete" onclick="deleteProduct(${product.id})">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function selectCategory(element, categoryName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            selectedCategoryGlobal = categoryName;
+            filterProducts(); 
+        }
+
+        function filterProducts() {
+            const searchTxt = document.getElementById("searchInput").value.toLowerCase();
+            const sortValue = document.getElementById("priceFilter").value;
+            let filteredList = allProductsRaw;
+
+            if (selectedCategoryGlobal !== 'all') {
+                filteredList = filteredList.filter(product => product.category === selectedCategoryGlobal);
+            }
+            filteredList = filteredList.filter(product => product.name.toLowerCase().includes(searchTxt));
+
+            if (sortValue === "lowToHigh") filteredList.sort((a, b) => a.price - b.price);
+            else if (sortValue === "highToLow") filteredList.sort((a, b) => b.price - a.price);
+
+            renderGrid(filteredList);
+        }
+
+        async function fetchCartFromDB() {
+            try {
+                const response = await fetch(`${API_URL}/cart`);
+                currentCartItemsGlobal = await response.json();
+                updateCartUI(currentCartItemsGlobal);
+            } catch (error) { console.error(error); }
+        }
+
+        async function addToCartInDB(productId, name, price) {
+            try {
+                const response = await fetch(`${API_URL}/cart`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ productId, name, price })
+                });
+                if (response.ok) fetchCartFromDB(); 
+            } catch (error) { console.error(error); }
+        }
+
+        function updateCartUI(cartItemsList) {
+            document.getElementById('cart-count').innerText = cartItemsList.length;
+            const listContainer = document.getElementById('cartItemsList');
+            const totalContainer = document.getElementById('totalCartAmount');
+            listContainer.innerHTML = "";
+            let total = 0;
+
+            if(cartItemsList.length === 0) {
+                listContainer.innerHTML = "<p style='color: #64748b; text-align: center;'>Cart is completely empty.</p>";
+                totalContainer.innerText = "₹0";
+                return;
+            }
+
+            cartItemsList.forEach((item) => {
+                total += item.price;
+                listContainer.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <h4>${item.name}</h4>
+                            <span>₹${item.price.toLocaleString('en-IN')}</span>
+                        </div>
+                        <button style="background:none; border:none; color:#ef4444; cursor:pointer;" onclick="removeFromCartDB(${item.id})">Remove</button>
+                    </div>
+                `;
+            });
+            totalContainer.innerText = "₹" + total.toLocaleString('en-IN');
+        }
+
+        async function removeFromCartDB(cartItemId) {
+            try {
+                if((await fetch(`${API_URL}/cart/${cartItemId}`, { method: "DELETE" })).ok) fetchCartFromDB();
+            } catch (error) { console.error(error); }
+        }
+
+        async function checkoutCart() {
+            if (currentCartItemsGlobal.length === 0) return;
+            let totalCost = currentCartItemsGlobal.reduce((sum, item) => sum + item.price, 0);
+
+            try {
+                const orderResponse = await fetch(`${API_URL}/orders`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ totalItems: currentCartItemsGlobal.length, totalAmount: totalCost })
+                });
+                if (orderResponse.ok) {
+                    await fetch(`${API_URL}/cart/clear`, { method: "DELETE" });
+                    alert("🎉 Order executed successfully!");
+                    await fetchCartFromDB(); await fetchOrderHistoryFromDB(); toggleCartModal(false);
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        async function fetchOrderHistoryFromDB() {
+            try {
+                const response = await fetch(`${API_URL}/orders`);
+                const ordersList = await response.json();
+                const tableBody = document.getElementById("order-table-body");
+                tableBody.innerHTML = "";
+
+                let totalOrders = ordersList.length;
+                let totalSales = ordersList.reduce((sum, ord) => sum + ord.totalAmount, 0);
+                let avgOrderValue = totalOrders > 0 ? (totalSales / totalOrders) : 0;
+
+                document.getElementById("metrics-orders").innerText = totalOrders;
+                document.getElementById("metrics-sales").innerText = "₹" + totalSales.toLocaleString('en-IN');
+                document.getElementById("metrics-avg").innerText = "₹" + Math.round(avgOrderValue).toLocaleString('en-IN');
+
+                if (ordersList.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #64748b;">No business records captured yet.</td></tr>`;
+                    return;
+                }
+
+                ordersList.forEach(order => {
+                    let formattedDate = order.orderDate ? new Date(order.orderDate).toLocaleString('en-IN') : "Just Now";
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td><strong>#ORD-${order.id}</strong></td>
+                            <td>${order.totalItems} Items</td>
+                            <td style="color: #10b981; font-weight: bold;">₹${order.totalAmount.toLocaleString('en-IN')}</td>
+                            <td>${formattedDate}</td>
+                            <td><button style="background-color:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="cancelOrderDB(${order.id})">Delete Log 🗑️</button></td>
+                        </tr>
+                    `;
+                });
+            } catch (error) { console.error(error); }
+        }
+
+        async function cancelOrderDB(orderId) {
+            if (confirm("Permanently erase transaction record from logs?")) {
+                try {
+                    if((await fetch(`${API_URL}/orders/${orderId}`, { method: "DELETE" })).ok) await fetchOrderHistoryFromDB();
+                } catch (error) { console.error(error); }
+            }
+        }
+
+        function toggleCartModal(show) {
+            const overlay = document.getElementById('cartOverlay');
+            if(show) overlay.classList.add('active'); else overlay.classList.remove('active');
+        }
+
+        async function saveProduct(event) {
+            event.preventDefault();
+            const newProduct = {
+                name: document.getElementById("p_name").value,
+                price: parseFloat(document.getElementById("p_price").value),
+                description: document.getElementById("p_desc").value,
+                category: document.getElementById("p_category").value,
+                imageUrl: document.getElementById("p_image").value
+            };
+            try {
+                if((await fetch(API_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newProduct) })).ok) {
+                    document.getElementById("productForm").reset(); loadProducts();
+                }
+            } catch (error) { console.error(error); }
+        }
+
+        async function deleteProduct(productId) {
+            if (confirm("Kya aap is item ko marketplace se hatana chahte hain? (Data safe rahega)")) {
+                try {
+                    if((await fetch(`${API_URL}/${productId}`, { method: "DELETE" })).ok) { loadProducts(); fetchCartFromDB(); }
+                } catch (error) { console.error(error); }
+            }
+        }
+
+        async function editProduct(id, oldName, oldPrice, oldDesc, oldImg, oldCat) {
+            const newName = prompt("Naya Product Name:", oldName); if (!newName) return;
+            const newPrice = prompt("Naya Price:", oldPrice); if (!newPrice) return;
+            const newDesc = prompt("Naya Description:", oldDesc); if (!newDesc) return;
+            const newCat = prompt("Nayi Category (Audio/Wearables):", oldCat); if (!newCat) return;
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: newName, price: parseFloat(newPrice), description: newDesc, category: newCat, imageUrl: oldImg })
+                });
+                if (response.ok) { loadProducts(); fetchCartFromDB(); }
+            } catch (error) { console.error(error); }
+        }
+
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
